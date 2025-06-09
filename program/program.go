@@ -9,7 +9,6 @@ import (
 type Program struct{}
 
 func (p *Program) Init() {
-	ebiten.SetMaxTPS(60)
 	ebiten.SetWindowTitle("Platformer World Maker")
 	ebiten.SetFullscreen(true)
 }
