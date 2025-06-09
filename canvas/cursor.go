@@ -12,8 +12,11 @@ type Cursor struct {
 	color color.RGBA
 }
 
-func (c *Cursor) Construct(rect attributes.Rect) {
-	c.rect = rect
+func (c *Cursor) Construct(size attributes.Spatial) {
+	c.rect = attributes.Rect{
+		Position: attributes.Spatial{X: 0, Y: 0},
+		Size:     size,
+	}
 	c.color = color.RGBA{58, 55, 94, 80}
 }
 

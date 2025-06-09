@@ -25,6 +25,10 @@ type Entry struct {
 func (e *Entry) Construct(position attributes.Spatial) {
 	e.rect = attributes.Rect{
 		Position: position,
+		Size: attributes.Spatial{
+			X: 140,
+			Y: 60,
+		},
 	}
 	e.clr = attributes.Color{
 		Current:   color.RGBA{58, 55, 94, 255},

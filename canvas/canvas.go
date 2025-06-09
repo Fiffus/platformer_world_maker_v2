@@ -18,23 +18,23 @@ type Canvas struct {
 	baseTileSize float64
 }
 
-func (canvas *Canvas) Contruct(images map[string]*ebiten.Image) {
+func (c *Canvas) Contruct(images map[string]*ebiten.Image) {
 	var screenWidth, screenHeight int = ebiten.Monitor().Size()
 	var width float64 = float64(screenWidth) * 0.75
 
-	canvas.canvas = ebiten.NewImage(int(width), screenHeight)
-	canvas.position = attributes.Spatial{X: float64(screenWidth) - width, Y: 0}
-	canvas.camera = Camera{}
-	canvas.camera.Construct(attributes.Spatial{X: width, Y: float64(screenHeight)})
-	canvas.baseTileSize = loader.CalcBaseSize(images)
+	c.canvas = ebiten.NewImage(int(width), screenHeight)
+	c.position = attributes.Spatial{X: float64(screenWidth) - width, Y: 0}
+	c.camera = Camera{}
+	c.camera.Construct(attributes.Spatial{X: width, Y: float64(screenHeight)})
+	c.baseTileSize = loader.CalcBaseSize(images)
 
-	canvas.layers = []attributes.Layer{}
-	canvas.layers = append(canvas.layers, attributes.Layer{})
-	canvas.layers[0].Construct(160, 230, canvas.baseTileSize)
+	c.layers = []attributes.Layer{}
+	c.layers = append(c.layers, attributes.Layer{})
+	c.layers[0].Construct(160, 230, c.baseTileSize)
 }
 
-func (canvas *Canvas) ChangeDimensions(dimensions [2]int) {
-	for layerIndex := range canvas.layers {
+func (c *Canvas) ChangeDimensions(dimensions [2]int) {
+	for layerIndex := range c.layers {
 		var temp attributes.Layer = make(attributes.Layer, dimensions[1])
 
 		for row := range dimensions[1] {
@@ -42,35 +42,35 @@ func (canvas *Canvas) ChangeDimensions(dimensions [2]int) {
 			for col := range dimensions[0] {
 				// keep old
 				if row < dimensions[1] && col < dimensions[0] {
-					temp[row][col] = canvas.layers[layerIndex][row][col]
+					temp[row][col] = c.layers[layerIndex][row][col]
 					continue
 				}
 				// add new tiles when enlarging canvas
 				temp[row][col] = attributes.Tile{}
 				temp[row][col].Construct(
-					attributes.Spatial{X: float64(col) * canvas.baseTileSize, Y: float64(row) * canvas.baseTileSize},
-					canvas.baseTileSize,
+					attributes.Spatial{X: float64(col) * c.baseTileSize, Y: float64(row) * c.baseTileSize},
+					c.baseTileSize,
 					"air",
 					nil,
 				)
 			}
 		}
-		canvas.layers[layerIndex] = make(attributes.Layer, dimensions[1])
+		c.layers[layerIndex] = make(attributes.Layer, dimensions[1])
 		for row := range dimensions[1] {
-			canvas.layers[layerIndex] = make(attributes.Layer, dimensions[0])
+			c.layers[layerIndex] = make(attributes.Layer, dimensions[0])
 			for col := range dimensions[0] {
-				canvas.layers[layerIndex][row][col] = temp[row][col]
+				c.layers[layerIndex][row][col] = temp[row][col]
 			}
 		}
 	}
-	canvas.CheckBoundsAfterDimensionChange()
+	c.CheckBoundsAfterDimensionChange()
 }
 
-func (canvas *Canvas) CheckBoundsAfterDimensionChange() {
-	canvas.camera.CheckBoundsAfterDimensionChange(
+func (c *Canvas) CheckBoundsAfterDimensionChange() {
+	c.camera.CheckBoundsAfterDimensionChange(
 		attributes.Spatial{
-			X: float64(len(canvas.layers[0][0])) * canvas.baseTileSize * attributes.SCALE,
-			Y: float64(len(canvas.layers[0])) * canvas.baseTileSize * attributes.SCALE,
+			X: float64(len(c.layers[0][0])) * c.baseTileSize * attributes.SCALE,
+			Y: float64(len(c.layers[0])) * c.baseTileSize * attributes.SCALE,
 		},
 	)
 }
@@ -153,12 +153,12 @@ func (c *Canvas) drawLayers() {
 	}
 }
 
-func (canvas *Canvas) Render(surface *ebiten.Image, currentLayer byte) {
-	canvas.canvas.Fill(color.RGBA{15, 15, 15, 255})
+func (c *Canvas) Draw(surface *ebiten.Image) {
+	c.canvas.Fill(color.RGBA{15, 15, 15, 255})
 
-	canvas.drawLayers()
+	c.drawLayers()
 
 	options := &ebiten.DrawImageOptions{}
-	options.GeoM.Translate(canvas.position.X, canvas.position.Y)
-	surface.DrawImage(canvas.canvas, options)
+	options.GeoM.Translate(c.position.X, c.position.Y)
+	surface.DrawImage(c.canvas, options)
 }

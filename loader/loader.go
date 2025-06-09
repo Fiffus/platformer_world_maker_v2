@@ -47,7 +47,7 @@ func getImageNames() []string {
 	return imageNames
 }
 
-func LoadTextures() map[string]*ebiten.Image {
+func LoadImages() map[string]*ebiten.Image {
 	var tileImages map[string]*ebiten.Image = make(map[string]*ebiten.Image)
 	for _, imageName := range getImageNames() {
 		image, _, err := ebitenutil.NewImageFromFile("textures/" + imageName)

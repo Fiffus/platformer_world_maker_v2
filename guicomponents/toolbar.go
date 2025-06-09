@@ -25,8 +25,8 @@ type Toolbar struct {
 	boundsY                   float64
 }
 
-func (tb *Toolbar) Construct(textures map[string]*ebiten.Image) {
-	tb.loadTools(textures)
+func (tb *Toolbar) Construct(images map[string]*ebiten.Image) {
+	tb.loadTools(images)
 	tb.selectedNew = false
 	var screenWidth, screenHeight int = ebiten.Monitor().Size()
 	var width float64 = float64(screenWidth) * 0.217

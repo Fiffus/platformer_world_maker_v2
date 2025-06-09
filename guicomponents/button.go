@@ -27,6 +27,10 @@ type Button struct {
 func (b *Button) Construct(position attributes.Spatial, buttonText string) {
 	b.rect = attributes.Rect{
 		Position: position,
+		Size: attributes.Spatial{
+			X: 140,
+			Y: 60,
+		},
 	}
 	b.text = buttonText
 	var err error
@@ -99,7 +103,8 @@ func (b *Button) Load(projectName string, layers *[]attributes.Layer, images map
 		(*layers)[i] = loader.GenerateLevelTiles(images, fmt.Sprintf("%s/layer_%d.csv", projectName, i), dimensions)
 	}
 
-	dimensionChanger.entry.text = fmt.Sprintf("%dx%d", dimensions[0], dimensions[1])
+	dimensionChanger.entryX.text = fmt.Sprintf("%d", dimensions[0])
+	dimensionChanger.entryY.text = fmt.Sprintf("%d", dimensions[1])
 }
 
 func (b *Button) Save(projectName string, layers []attributes.Layer) {
