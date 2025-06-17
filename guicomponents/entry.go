@@ -26,7 +26,7 @@ func (e *Entry) Construct(position attributes.Spatial) {
 	e.rect = attributes.Rect{
 		Position: position,
 		Size: attributes.Spatial{
-			X: 140,
+			X: 200,
 			Y: 60,
 		},
 	}
@@ -98,7 +98,7 @@ func (e *Entry) Update() {
 func (e *Entry) Draw(surface *ebiten.Image) {
 	e.rect.Draw(surface, e.clr.Current, attributes.Spatial{X: 0, Y: 0})
 	options := &text.DrawOptions{}
-	options.GeoM.Translate(e.rect.Left()+e.rect.Size.X/2-float64(len(e.text))*150/18, e.rect.Top()+e.rect.Size.Y/2+10)
+	options.GeoM.Translate(e.rect.Left()+e.rect.Size.X/2-float64(len(e.text))/2*20, e.rect.Top()+e.rect.Size.Y/2-25)
 	options.ColorScale.Scale(1, 1, 1, 1)
 	text.Draw(surface, e.text, e.fontFace, options)
 }

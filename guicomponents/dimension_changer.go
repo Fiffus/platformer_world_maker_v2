@@ -22,9 +22,9 @@ func (dc *DimensionChanger) Construct(position attributes.Spatial) {
 	dc.entryY.Construct(attributes.Spatial{X: position.X, Y: position.Y + dc.entryX.rect.Size.Y})
 	dc.entryX.text = "230"
 	dc.entryY.text = "160"
-	dc.validX = false
+	dc.validX = true
 	dc.changeableX = false
-	dc.validY = false
+	dc.validY = true
 	dc.changeableY = false
 }
 
@@ -41,7 +41,7 @@ func (dc *DimensionChanger) ValueX() string {
 }
 
 func (dc *DimensionChanger) ValueY() string {
-	return dc.entryX.text
+	return dc.entryY.text
 }
 
 func (dc *DimensionChanger) ChangeableX() bool {
@@ -58,23 +58,19 @@ func (dc *DimensionChanger) ChangeUsed() {
 }
 
 func (dc *DimensionChanger) validateInputX() {
-	if dc.entryX.entered {
-		if _, err := strconv.Atoi(dc.entryX.text); err != nil {
-			dc.validX = false
-			return
-		}
-		dc.validX = true
+	if _, err := strconv.Atoi(dc.entryX.text); err != nil {
+		dc.validX = false
+		return
 	}
+	dc.validX = true
 }
 
 func (dc *DimensionChanger) validateInputY() {
-	if dc.entryY.entered {
-		if _, err := strconv.Atoi(dc.entryY.text); err != nil {
-			dc.validY = false
-			return
-		}
-		dc.validY = true
+	if _, err := strconv.Atoi(dc.entryY.text); err != nil {
+		dc.validY = false
+		return
 	}
+	dc.validY = true
 }
 
 func (dc *DimensionChanger) Update() {

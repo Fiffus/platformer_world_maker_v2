@@ -14,7 +14,7 @@ import (
 
 func loadImageNamesFromCSV(projectLayerName string) []string {
 	var imageNames []string
-	fileContent, err := os.ReadFile(fmt.Sprintf("worlds/%s", projectLayerName))
+	fileContent, err := os.ReadFile(projectLayerName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,9 +25,9 @@ func loadImageNamesFromCSV(projectLayerName string) []string {
 func transformData(data []string, dimensions [2]int) [][]string {
 	var transformedData [][]string = make([][]string, dimensions[1])
 	var imgIndex int = 0
-	for i := 0; i < dimensions[1]; i++ {
+	for i := range dimensions[1] {
 		transformedData[i] = make([]string, dimensions[0])
-		for j := 0; j < dimensions[0]; j++ {
+		for j := range dimensions[0] {
 			transformedData[i][j] = data[imgIndex]
 			imgIndex++
 		}
@@ -36,7 +36,7 @@ func transformData(data []string, dimensions [2]int) [][]string {
 }
 
 func getImageNames() []string {
-	dir, err := os.ReadDir("textures")
+	dir, err := os.ReadDir("images")
 	var imageNames []string
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +50,7 @@ func getImageNames() []string {
 func LoadImages() map[string]*ebiten.Image {
 	var tileImages map[string]*ebiten.Image = make(map[string]*ebiten.Image)
 	for _, imageName := range getImageNames() {
-		image, _, err := ebitenutil.NewImageFromFile("textures/" + imageName)
+		image, _, err := ebitenutil.NewImageFromFile("images/" + imageName)
 		tileImages[strings.Split(imageName, ".")[0]] = image
 		if err != nil {
 			log.Fatal(err)
@@ -69,8 +69,22 @@ func CalcBaseSize(loadedImages map[string]*ebiten.Image) float64 {
 	return 40
 }
 
+func Layers(projectName string) (layers []string) {
+	files, err := os.ReadDir(fmt.Sprintf("worlds/%s", projectName))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, file := range files {
+		if strings.Split(file.Name(), "_")[0] == "layer" {
+			layers = append(layers, file.Name())
+		}
+	}
+	return layers
+}
+
 func GenerateLevelTiles(loadedImages map[string]*ebiten.Image, projectLayerName string, dimensions [2]int) attributes.Layer {
 	var baseSize float64 = CalcBaseSize(loadedImages)
+
 	var imageNames [][]string = transformData(loadImageNamesFromCSV(fmt.Sprintf("worlds/%s", projectLayerName)), dimensions)
 	var layer attributes.Layer = make(attributes.Layer, dimensions[1])
 

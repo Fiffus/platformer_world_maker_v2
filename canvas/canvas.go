@@ -13,7 +13,7 @@ type Canvas struct {
 	canvas       *ebiten.Image
 	position     attributes.Spatial
 	camera       Camera
-	layers       []attributes.Layer
+	Layers       []attributes.Layer
 	activeLayer  int
 	baseTileSize float64
 }
@@ -28,21 +28,21 @@ func (c *Canvas) Contruct(images map[string]*ebiten.Image) {
 	c.camera.Construct(attributes.Spatial{X: width, Y: float64(screenHeight)})
 	c.baseTileSize = loader.CalcBaseSize(images)
 
-	c.layers = []attributes.Layer{}
-	c.layers = append(c.layers, attributes.Layer{})
-	c.layers[0].Construct(160, 230, c.baseTileSize)
+	c.Layers = []attributes.Layer{}
+	c.Layers = append(c.Layers, attributes.Layer{})
+	c.Layers[0].Construct(160, 230, c.baseTileSize)
 }
 
 func (c *Canvas) ChangeDimensions(dimensions [2]int) {
-	for layerIndex := range c.layers {
+	for layerIndex := range c.Layers {
 		var temp attributes.Layer = make(attributes.Layer, dimensions[1])
 
 		for row := range dimensions[1] {
 			temp[row] = make([]attributes.Tile, dimensions[0])
 			for col := range dimensions[0] {
 				// keep old
-				if row < dimensions[1] && col < dimensions[0] {
-					temp[row][col] = c.layers[layerIndex][row][col]
+				if row < len(c.Layers[0]) && col < len(c.Layers[0][0]) {
+					temp[row][col] = c.Layers[layerIndex][row][col]
 					continue
 				}
 				// add new tiles when enlarging canvas
@@ -55,11 +55,11 @@ func (c *Canvas) ChangeDimensions(dimensions [2]int) {
 				)
 			}
 		}
-		c.layers[layerIndex] = make(attributes.Layer, dimensions[1])
+		c.Layers[layerIndex] = make(attributes.Layer, dimensions[1])
 		for row := range dimensions[1] {
-			c.layers[layerIndex] = make(attributes.Layer, dimensions[0])
+			c.Layers[layerIndex][row] = make([]attributes.Tile, dimensions[0])
 			for col := range dimensions[0] {
-				c.layers[layerIndex][row][col] = temp[row][col]
+				c.Layers[layerIndex][row][col] = temp[row][col]
 			}
 		}
 	}
@@ -69,8 +69,8 @@ func (c *Canvas) ChangeDimensions(dimensions [2]int) {
 func (c *Canvas) CheckBoundsAfterDimensionChange() {
 	c.camera.CheckBoundsAfterDimensionChange(
 		attributes.Spatial{
-			X: float64(len(c.layers[0][0])) * c.baseTileSize * attributes.SCALE,
-			Y: float64(len(c.layers[0])) * c.baseTileSize * attributes.SCALE,
+			X: float64(len(c.Layers[0][0])) * c.baseTileSize * attributes.SCALE,
+			Y: float64(len(c.Layers[0])) * c.baseTileSize * attributes.SCALE,
 		},
 	)
 }
@@ -79,8 +79,12 @@ func (c *Canvas) SetActiveLayer(newActive int) {
 	c.activeLayer = newActive
 }
 
+func (c *Canvas) ActiveLayer() int {
+	return c.activeLayer
+}
+
 func (c *Canvas) Update(currentImageName string, currentImage *ebiten.Image, cursor attributes.Rect) {
-	c.camera.Move(attributes.Spatial{X: float64(len(c.layers[0][0])) * c.baseTileSize * attributes.SCALE, Y: float64(len(c.layers[0])) * c.baseTileSize * attributes.SCALE})
+	c.camera.Move(attributes.Spatial{X: float64(len(c.Layers[0][0])) * c.baseTileSize * attributes.SCALE, Y: float64(len(c.Layers[0])) * c.baseTileSize * attributes.SCALE})
 	var screenWidth, screenHeight int = ebiten.Monitor().Size()
 
 	cursor.Position.X += c.camera.Offset().X - float64(screenWidth)*0.25
@@ -93,29 +97,35 @@ func (c *Canvas) Update(currentImageName string, currentImage *ebiten.Image, cur
 
 	for row := startRow; row <= endRow; row++ {
 		for col := startCol; col <= endCol; col++ {
-			if row > -1 && row < len(c.layers[0]) && col > -1 && col < len(c.layers[0][0]) {
+			if row > -1 && row < len(c.Layers[0]) && col > -1 && col < len(c.Layers[0][0]) {
 				if ebiten.IsKeyPressed(ebiten.KeyShiftLeft) {
-					if c.layers[c.activeLayer][row][col].Rect().CollidePoint(cursor.Center()) && cursor.Right()-c.camera.Offset().X+float64(screenWidth)*0.25 > float64(screenWidth)*0.25 {
+					if c.Layers[c.activeLayer][row][col].Rect().CollidePoint(cursor.Center()) && cursor.Right()-c.camera.Offset().X+float64(screenWidth)*0.25 > float64(screenWidth)*0.25 {
 						if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-							c.layers[c.activeLayer][row][col].SetImage(currentImageName, currentImage)
+							c.Layers[c.activeLayer][row][col].SetImage(currentImageName, currentImage)
 						}
 						if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-							c.layers[c.activeLayer][row][col].SetImage("air", nil)
+							c.Layers[c.activeLayer][row][col].SetImage("air", nil)
 						}
 					}
 					continue
 				}
-				if cursor.CollideRect(c.layers[c.activeLayer][row][col].Rect()) && cursor.Right()-c.camera.Offset().X+float64(screenWidth)*0.25 > float64(screenWidth)*0.25 {
+				if cursor.CollideRect(c.Layers[c.activeLayer][row][col].Rect()) && cursor.Right()-c.camera.Offset().X+float64(screenWidth)*0.25 > float64(screenWidth)*0.25 {
 					if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-						c.layers[c.activeLayer][row][col].SetImage(currentImageName, currentImage)
+						c.Layers[c.activeLayer][row][col].SetImage(currentImageName, currentImage)
 					}
 					if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
-						c.layers[c.activeLayer][row][col].SetImage("air", nil)
+						c.Layers[c.activeLayer][row][col].SetImage("air", nil)
 					}
 				}
 			}
 		}
 	}
+}
+
+func (c *Canvas) AddLayer() {
+	var newLayer attributes.Layer = attributes.Layer{}
+	newLayer.Construct(len(c.Layers[0]), len(c.Layers[0][0]), c.baseTileSize)
+	c.Layers = append(c.Layers, newLayer)
 }
 
 func (c *Canvas) drawLayers() {
@@ -126,16 +136,16 @@ func (c *Canvas) drawLayers() {
 	var endRow int = int(math.Round((c.camera.offset.Y+float64(screenHeight))/(attributes.SCALE*c.baseTileSize))) + 2
 	var endCol int = int(math.Round((c.camera.offset.X+float64(screenWidth))/(attributes.SCALE*c.baseTileSize))) + 2
 
-	for layerIndex := len(c.layers) - 1; layerIndex >= 0; layerIndex-- {
+	for layerIndex := len(c.Layers) - 1; layerIndex >= 0; layerIndex-- {
 		if layerIndex == c.activeLayer {
 			continue
 		}
 		for row := startRow; row <= endRow; row++ {
 			for col := startCol; col <= endCol; col++ {
-				if row > -1 && row < len(c.layers[0]) && col > -1 && col < len(c.layers[0]) {
-					if c.layers[layerIndex][row][col].Image() != nil && c.camera.Rect().CollideRect(c.layers[layerIndex][row][col].Rect()) {
+				if row > -1 && row < len(c.Layers[0]) && col > -1 && col < len(c.Layers[0][0]) {
+					if c.Layers[layerIndex][row][col].Image() != nil && c.camera.Rect().CollideRect(c.Layers[layerIndex][row][col].Rect()) {
 						var opacity float64 = 1 / (float64(layerIndex) + 0.2) // non-active layers are going to have at least by 0.2 lower opacity than the active layer
-						c.layers[layerIndex][row][col].Draw(c.canvas, opacity, c.camera.offset)
+						c.Layers[layerIndex][row][col].Draw(c.canvas, opacity, c.camera.offset)
 					}
 				}
 			}
@@ -144,9 +154,9 @@ func (c *Canvas) drawLayers() {
 	// draw active layer last
 	for row := startRow; row <= endRow; row++ {
 		for col := startCol; col <= endCol; col++ {
-			if row > -1 && row < len(c.layers[0]) && col > -1 && col < len(c.layers[0]) {
-				if c.layers[c.activeLayer][row][col].Image() != nil && c.camera.Rect().CollideRect(c.layers[c.activeLayer][row][col].Rect()) {
-					c.layers[c.activeLayer][row][col].Draw(c.canvas, 1, c.camera.offset)
+			if row > -1 && row < len(c.Layers[0]) && col > -1 && col < len(c.Layers[0][0]) {
+				if c.Layers[c.activeLayer][row][col].Image() != nil && c.camera.Rect().CollideRect(c.Layers[c.activeLayer][row][col].Rect()) {
+					c.Layers[c.activeLayer][row][col].Draw(c.canvas, 1, c.camera.offset)
 				}
 			}
 		}

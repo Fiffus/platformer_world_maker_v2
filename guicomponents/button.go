@@ -28,7 +28,7 @@ func (b *Button) Construct(position attributes.Spatial, buttonText string) {
 	b.rect = attributes.Rect{
 		Position: position,
 		Size: attributes.Spatial{
-			X: 140,
+			X: 200,
 			Y: 60,
 		},
 	}
@@ -76,7 +76,7 @@ func (b *Button) Draw(surface *ebiten.Image) {
 	b.rect.Draw(surface, b.clr.Current, attributes.Spatial{X: 0, Y: 0})
 
 	options := &text.DrawOptions{}
-	options.GeoM.Translate(b.rect.Left()+b.rect.Size.X/2-float64(len(b.text))*150/18, b.rect.Top()+b.rect.Size.Y/2+10)
+	options.GeoM.Translate(b.rect.Left()+b.rect.Size.X/2-float64(len(b.text))/2*20, b.rect.Top()+b.rect.Size.Y/2-25)
 	options.ColorScale.Scale(1, 1, 1, 1)
 	text.Draw(surface, b.text, b.fontFace, options)
 }
@@ -89,19 +89,25 @@ func (b *Button) Fill(layer *attributes.Layer, currentImageName string, currentI
 	}
 }
 
-func (b *Button) Load(projectName string, layers *[]attributes.Layer, images map[string]*ebiten.Image, dimensionChanger *DimensionChanger) {
+func (b *Button) Load(projectName string, layers *[]attributes.Layer, images map[string]*ebiten.Image, dropDown *DropDown, dimensionChanger *DimensionChanger) {
 	if projectName == "" {
 		return
 	}
-	var dimensions [2]int = loader.LoadDimensions(fmt.Sprintf("%s/properties.txt", projectName))
-
-	for i := range *layers {
-		(*layers)[i] = make(attributes.Layer, dimensions[1])
+	var dimensions [2]int = loader.LoadDimensions(projectName)
+	var layerNames []string = loader.Layers(projectName)
+	fmt.Println(dimensions)
+	var temp []attributes.Layer = make([]attributes.Layer, len(layerNames))
+	for i, layerName := range layerNames {
+		temp[i] = make(attributes.Layer, dimensions[1])
 		for j := range dimensions[1] {
-			(*layers)[i][j] = make([]attributes.Tile, dimensions[0])
+			temp[i][j] = make([]attributes.Tile, dimensions[0])
 		}
-		(*layers)[i] = loader.GenerateLevelTiles(images, fmt.Sprintf("%s/layer_%d.csv", projectName, i), dimensions)
+		temp[i] = loader.GenerateLevelTiles(images, fmt.Sprintf("%s/%s", projectName, layerName), dimensions)
 	}
+
+	*layers = temp
+
+	dropDown.LoadLayers(len(layerNames))
 
 	dimensionChanger.entryX.text = fmt.Sprintf("%d", dimensions[0])
 	dimensionChanger.entryY.text = fmt.Sprintf("%d", dimensions[1])
@@ -125,7 +131,7 @@ func (b *Button) Save(projectName string, layers []attributes.Layer) {
 
 	for i := range layers {
 		var layerFile *os.File
-		if layerFile, err = os.OpenFile(fmt.Sprintf("worlds/%s/layer_1.csv", projectName), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err != nil {
+		if layerFile, err = os.OpenFile(fmt.Sprintf("worlds/%s/layer_%d.csv", projectName, i), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644); err != nil {
 			log.Fatal(err)
 		}
 		defer layerFile.Close()

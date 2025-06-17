@@ -18,30 +18,30 @@ type PopUpWindow struct {
 
 func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 	var width, height int = ebiten.Monitor().Size()
-	var size attributes.Spatial = attributes.Spatial{X: 400, Y: 300}
+	var size attributes.Spatial = attributes.Spatial{X: 500, Y: 300}
 
 	puw.rect = attributes.Rect{
-		Position: attributes.Spatial{X: float64(width)/2 - size.X, Y: float64(height)/2 - size.Y},
+		Position: attributes.Spatial{X: float64(width)/2 - size.X/2, Y: float64(height)/2 - size.Y/2},
 		Size:     size,
 	}
 	puw.confirm.Construct(
 		attributes.Spatial{
-			X: puw.rect.Left(),
-			Y: puw.rect.Top(),
+			X: puw.rect.Right(),
+			Y: puw.rect.Bottom(),
 		},
 		"Confirm",
 	)
 	puw.cancel.Construct(
 		attributes.Spatial{
 			X: puw.rect.Left(),
-			Y: puw.rect.Top(),
+			Y: puw.rect.Bottom(),
 		},
 		"Cancel",
 	)
 	puw.entry.Construct(
 		attributes.Spatial{
 			X: puw.rect.Left(),
-			Y: puw.rect.Top(),
+			Y: puw.rect.MidLeft().Y,
 		},
 	)
 	puw.title.Construct(
@@ -70,11 +70,17 @@ func (puw *PopUpWindow) Activate() {
 	puw.active = true
 }
 
+func (puw *PopUpWindow) Active() bool {
+	return puw.active
+}
+
 func (puw *PopUpWindow) Update() {
 	if !puw.active {
 		return
 	}
 
+	puw.confirm.HighLight()
+	puw.cancel.HighLight()
 	puw.entry.Update()
 
 	if puw.confirm.Pressed() {
