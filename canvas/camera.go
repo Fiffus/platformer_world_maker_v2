@@ -22,16 +22,16 @@ func (c *Camera) Construct(size attributes.Spatial) {
 }
 
 func (c *Camera) Move(bounds attributes.Spatial) {
-	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) && c.rect.Top()-c.speed >= 0 {
+	if (ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW)) && c.rect.Top()-c.speed >= 0 {
 		c.rect.Position.Y -= c.speed
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) && c.rect.Left()-c.speed >= 0 {
+	if (ebiten.IsKeyPressed(ebiten.KeyArrowLeft) || ebiten.IsKeyPressed(ebiten.KeyA)) && c.rect.Left()-c.speed >= 0 {
 		c.rect.Position.X -= c.speed
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) && c.rect.Bottom()+c.speed <= bounds.Y {
+	if (ebiten.IsKeyPressed(ebiten.KeyArrowDown) || ebiten.IsKeyPressed(ebiten.KeyS)) && c.rect.Bottom()+c.speed <= bounds.Y {
 		c.rect.Position.Y += c.speed
 	}
-	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) && c.rect.Right()+c.speed <= bounds.X {
+	if (ebiten.IsKeyPressed(ebiten.KeyArrowRight) || ebiten.IsKeyPressed(ebiten.KeyD)) && c.rect.Right()+c.speed <= bounds.X {
 		c.rect.Position.X += c.speed
 	}
 	c.scroll(bounds)

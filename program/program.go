@@ -92,7 +92,7 @@ func (p *Program) Update() error {
 
 	p.canv.Update(p.toolbar.SelectedName(), p.toolbar.SelectedImage(), p.cursor.Rect())
 	p.dimensionChanger.Update()
-	if p.dimensionChanger.ValidX() && p.dimensionChanger.ValidY() && (p.dimensionChanger.ChangeableX() || p.dimensionChanger.ChangeableY()) { // not true
+	if p.dimensionChanger.ValidX() && p.dimensionChanger.ValidY() && (p.dimensionChanger.ChangeableX() || p.dimensionChanger.ChangeableY()) {
 		var data [2]int
 		data[0], _ = strconv.Atoi(p.dimensionChanger.ValueX())
 		data[1], _ = strconv.Atoi(p.dimensionChanger.ValueY())
