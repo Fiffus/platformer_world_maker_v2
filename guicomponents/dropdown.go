@@ -165,10 +165,6 @@ func (dd *DropDown) Update() {
 			dd.activeRow = i
 			dd.text = dd.rows[i].text
 		}
-
-		if dd.rows[i].PressedRight() {
-			dd.rows[i].Dectivate()
-		}
 	}
 }
 

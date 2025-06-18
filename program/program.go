@@ -1,6 +1,7 @@
 package program
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"platformer_world_maker_v2/attributes"
@@ -23,6 +24,8 @@ type Program struct {
 	puwLoad          guicomponents.PopUpWindow
 	puwSave          guicomponents.PopUpWindow
 	cursor           canvas.Cursor
+
+	tickDelay int
 }
 
 func (p *Program) Init() {
@@ -55,6 +58,20 @@ func (p *Program) Init() {
 	p.puwSave.Construct("Save project as:", "")
 
 	p.cursor.Construct(attributes.Spatial{X: 70, Y: 70})
+
+	p.tickDelay = 0
+}
+
+func (p *Program) setDelayDefault() {
+	p.tickDelay = 5
+}
+
+func (p *Program) delayUpdate() bool {
+	if p.tickDelay == 0 {
+		return false
+	}
+	p.tickDelay--
+	return true
 }
 
 func (p *Program) Update() error {
@@ -62,10 +79,20 @@ func (p *Program) Update() error {
 		os.Exit(0)
 	}
 
+	fmt.Println(p.tickDelay)
+
+	if p.delayUpdate() {
+		return nil
+	}
+
 	if p.puwLoad.Active() {
 		p.puwLoad.Update()
 		if p.puwLoad.Confirmed() {
 			p.buttons["load"].Load(p.puwLoad.Value(), &p.canv.Layers, p.images, &p.dropDown, &p.dimensionChanger)
+			p.setDelayDefault()
+		}
+		if p.puwLoad.Cancelled() {
+			p.setDelayDefault()
 		}
 		return nil
 	}
@@ -74,6 +101,10 @@ func (p *Program) Update() error {
 		p.puwSave.Update()
 		if p.puwSave.Confirmed() {
 			p.buttons["save"].Save(p.puwSave.Value(), p.canv.Layers)
+			p.setDelayDefault()
+		}
+		if p.puwSave.Cancelled() {
+			p.setDelayDefault()
 		}
 		return nil
 	}

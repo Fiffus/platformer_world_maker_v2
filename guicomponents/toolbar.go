@@ -102,9 +102,11 @@ func (tb *Toolbar) loadTools(textures map[string]*ebiten.Image) {
 func (tb *Toolbar) SelectedImage() *ebiten.Image {
 	return tb.selectedImg
 }
+
 func (tb *Toolbar) SelectedName() string {
 	return tb.selectedName
 }
+
 func (tb *Toolbar) SelectedNew() bool {
 	return tb.selectedNew
 }
@@ -177,6 +179,7 @@ func (tb *Toolbar) updateScrollBar() {
 	}
 	tb.scrollbarColor = tb.scrollbarColorDefault
 }
+
 func (tb *Toolbar) Draw(surface *ebiten.Image) {
 	tb.rect.Draw(tb.field, color.RGBA{20, 20, 23, 255}, attributes.Spatial{X: 0, Y: 0})
 	for _, row := range tb.tools {
