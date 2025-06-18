@@ -30,17 +30,17 @@ type DropDown struct {
 	justAddedNewRow bool
 }
 
-func (dd *DropDown) Construct(position attributes.Spatial) {
+func (dd *DropDown) Construct(position attributes.Vector) {
 	dd.rect = attributes.Rect{
 		Position: position,
-		Size: attributes.Spatial{
+		Size: attributes.Vector{
 			X: 140,
 			Y: 60,
 		},
 	}
 	dd.addRect = attributes.Rect{
-		Position: attributes.Spatial{X: position.X + dd.rect.Size.X, Y: position.Y},
-		Size:     attributes.Spatial{X: 60, Y: 60},
+		Position: attributes.Vector{X: position.X + dd.rect.Size.X, Y: position.Y},
+		Size:     attributes.Vector{X: 60, Y: 60},
 	}
 	dd.text = "Layer 0"
 	var err error
@@ -59,7 +59,7 @@ func (dd *DropDown) Construct(position attributes.Spatial) {
 	}
 	dd.addClr = dd.clr
 	var firstRow DropDownRow = DropDownRow{}
-	firstRow.Construct(attributes.Spatial{X: position.X, Y: position.Y + dd.rect.Size.Y}, "Layer 0")
+	firstRow.Construct(attributes.Vector{X: position.X, Y: position.Y + dd.rect.Size.Y}, "Layer 0")
 	firstRow.Activate()
 	dd.rows = []DropDownRow{firstRow}
 	dd.activeRow = 0
@@ -70,7 +70,7 @@ func (dd *DropDown) Construct(position attributes.Spatial) {
 func (dd *DropDown) LoadLayers(numLayers int) {
 	dd.rows = make([]DropDownRow, numLayers)
 	for i := range numLayers {
-		dd.rows[i].Construct(attributes.Spatial{X: dd.rect.Position.X, Y: dd.rect.Position.Y + dd.rect.Size.Y*float64(i+1)}, fmt.Sprintf("Layer %d", i))
+		dd.rows[i].Construct(attributes.Vector{X: dd.rect.Position.X, Y: dd.rect.Position.Y + dd.rect.Size.Y*float64(i+1)}, fmt.Sprintf("Layer %d", i))
 	}
 	dd.rows[0].Activate()
 }
@@ -78,7 +78,7 @@ func (dd *DropDown) LoadLayers(numLayers int) {
 func (dd *DropDown) highLightAdd() {
 	var x, y int = ebiten.CursorPosition()
 
-	if dd.addRect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if dd.addRect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		dd.addClr.Current = dd.addClr.Highlight
 		return
 	}
@@ -88,7 +88,7 @@ func (dd *DropDown) highLightAdd() {
 func (dd *DropDown) highLight() {
 	var x, y int = ebiten.CursorPosition()
 
-	if dd.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if dd.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		dd.clr.Current = dd.clr.Highlight
 		return
 	}
@@ -98,10 +98,10 @@ func (dd *DropDown) highLight() {
 func (dd *DropDown) addNewRow() {
 	var x, y int = ebiten.CursorPosition()
 
-	if dd.addRect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if dd.addRect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 			var newRow DropDownRow = DropDownRow{}
-			newRow.Construct(attributes.Spatial{X: dd.rect.Position.X, Y: dd.rect.Position.Y + float64((len(dd.rows)+1)*60)}, fmt.Sprintf("Layer %d", len(dd.rows)))
+			newRow.Construct(attributes.Vector{X: dd.rect.Position.X, Y: dd.rect.Position.Y + float64((len(dd.rows)+1)*60)}, fmt.Sprintf("Layer %d", len(dd.rows)))
 			dd.rows = append(dd.rows, newRow)
 			dd.justAddedNewRow = true
 		}
@@ -124,7 +124,7 @@ func (dd *DropDown) toggle() {
 	var x, y int = ebiten.CursorPosition()
 
 	if !dd.opened {
-		if dd.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+		if dd.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 			if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 				dd.opened = true
 				return
@@ -132,11 +132,11 @@ func (dd *DropDown) toggle() {
 		}
 	}
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if dd.addRect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+		if dd.addRect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 			return
 		}
 		for i := range dd.rows {
-			if dd.rows[i].rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+			if dd.rows[i].rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 				return
 			}
 		}
@@ -169,8 +169,8 @@ func (dd *DropDown) Update() {
 }
 
 func (dd *DropDown) Draw(surface *ebiten.Image) {
-	dd.rect.Draw(surface, dd.clr.Current, attributes.Spatial{X: 0, Y: 0})
-	dd.addRect.Draw(surface, dd.addClr.Current, attributes.Spatial{X: 0, Y: 0})
+	dd.rect.Draw(surface, dd.clr.Current, attributes.Vector{X: 0, Y: 0})
+	dd.addRect.Draw(surface, dd.addClr.Current, attributes.Vector{X: 0, Y: 0})
 
 	var textWidth, textHeight = text.Measure(dd.text, dd.fontFace, dd.fontFace.Size+10)
 

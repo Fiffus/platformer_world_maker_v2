@@ -18,14 +18,14 @@ type PopUpWindow struct {
 
 func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 	var width, height int = ebiten.Monitor().Size()
-	var size attributes.Spatial = attributes.Spatial{X: 500, Y: 300}
+	var size attributes.Vector = attributes.Vector{X: 500, Y: 300}
 
 	puw.rect = attributes.Rect{
-		Position: attributes.Spatial{X: float64(width)/2 - size.X/2, Y: float64(height)/2 - size.Y/2},
+		Position: attributes.Vector{X: float64(width)/2 - size.X/2, Y: float64(height)/2 - size.Y/2},
 		Size:     size,
 	}
 	puw.confirm.Construct(
-		attributes.Spatial{
+		attributes.Vector{
 			X: puw.rect.Right(),
 			Y: puw.rect.Bottom(),
 		},
@@ -34,7 +34,7 @@ func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 	puw.confirm.rect.Position.X -= puw.confirm.rect.Size.X + 10
 	puw.confirm.rect.Position.Y -= puw.confirm.rect.Size.Y + 10
 	puw.cancel.Construct(
-		attributes.Spatial{
+		attributes.Vector{
 			X: puw.rect.Left(),
 			Y: puw.rect.Bottom(),
 		},
@@ -43,7 +43,7 @@ func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 	puw.cancel.rect.Position.X += 10
 	puw.cancel.rect.Position.Y -= puw.cancel.rect.Size.Y + 10
 	puw.entry.Construct(
-		attributes.Spatial{
+		attributes.Vector{
 			X: puw.rect.Left(),
 			Y: puw.rect.MidLeft().Y,
 		},
@@ -51,7 +51,7 @@ func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 	puw.entry.rect.Position.X = puw.rect.Center().X - puw.entry.rect.Size.X/2
 	puw.entry.rect.Position.Y = puw.rect.Center().Y - puw.entry.rect.Size.Y/2
 	puw.title.Construct(
-		attributes.Spatial{
+		attributes.Vector{
 			X: puw.rect.Left() + 10,
 			Y: puw.rect.Top() + 10,
 		},
@@ -102,7 +102,7 @@ func (puw *PopUpWindow) Draw(surface *ebiten.Image) {
 		return
 	}
 
-	puw.rect.Draw(surface, color.RGBA{100, 100, 120, 170}, attributes.Spatial{X: 0, Y: 0})
+	puw.rect.Draw(surface, color.RGBA{100, 100, 120, 170}, attributes.Vector{X: 0, Y: 0})
 	puw.confirm.Draw(surface)
 	puw.cancel.Draw(surface)
 	puw.entry.Draw(surface)

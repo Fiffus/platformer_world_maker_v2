@@ -10,10 +10,10 @@ type Tile struct {
 	image     *ebiten.Image
 }
 
-func (t *Tile) Construct(position Spatial, baseTileSize float64, textureName string, image *ebiten.Image) {
+func (t *Tile) Construct(position Vector, baseTileSize float64, textureName string, image *ebiten.Image) {
 	t.rect = Rect{
 		Position: position,
-		Size:     Spatial{X: baseTileSize, Y: baseTileSize},
+		Size:     Vector{X: baseTileSize, Y: baseTileSize},
 	}
 	t.imageName = textureName
 	t.image = image
@@ -36,7 +36,7 @@ func (t *Tile) SetImage(newImageName string, newImage *ebiten.Image) {
 	t.image = newImage
 }
 
-func (t *Tile) Draw(surface *ebiten.Image, opacity float64, offset Spatial) {
+func (t *Tile) Draw(surface *ebiten.Image, opacity float64, offset Vector) {
 	options := &ebiten.DrawImageOptions{}
 	options.ColorScale.Scale(1, 1, 1, float32(opacity))
 	options.GeoM.Scale(SCALE, SCALE)

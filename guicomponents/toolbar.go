@@ -11,6 +11,7 @@ import (
 
 type Toolbar struct {
 	field                     *ebiten.Image
+	position                  attributes.Vector
 	rect                      attributes.Rect
 	tools                     attributes.Tools
 	scrollbar                 attributes.Rect
@@ -26,18 +27,19 @@ type Toolbar struct {
 }
 
 func (tb *Toolbar) Construct(images map[string]*ebiten.Image) {
+	tb.position = attributes.Vector{X: 30, Y: 30}
 	tb.loadTools(images)
 	tb.selectedNew = false
 	var screenWidth, screenHeight int = ebiten.Monitor().Size()
 	var width float64 = float64(screenWidth) * 0.217
 	var height float64 = float64(screenHeight) * 0.5
 	tb.rect = attributes.Rect{
-		Position: attributes.Spatial{X: 0, Y: 0},
-		Size:     attributes.Spatial{X: width, Y: height},
+		Position: attributes.Vector{X: 0, Y: 0},
+		Size:     attributes.Vector{X: width, Y: height},
 	}
 	tb.scrollbarBackground = attributes.Rect{
-		Position: attributes.Spatial{X: width - 35 + 10, Y: 0},
-		Size:     attributes.Spatial{X: 35, Y: height},
+		Position: attributes.Vector{X: width - 35 + 10, Y: 0},
+		Size:     attributes.Vector{X: 35, Y: height},
 	}
 	tb.field = ebiten.NewImage(int(width), int(height))
 	tb.scrollbarColorDefault = color.RGBA{210, 210, 210, 255}
@@ -58,8 +60,8 @@ func (tb *Toolbar) Construct(images map[string]*ebiten.Image) {
 		scrollbarHeight = height
 	}
 	tb.scrollbar = attributes.Rect{
-		Position: attributes.Spatial{X: width - 35 + 10, Y: 0},
-		Size:     attributes.Spatial{X: 35, Y: scrollbarHeight},
+		Position: attributes.Vector{X: width - 35 + 10, Y: 0},
+		Size:     attributes.Vector{X: 35, Y: scrollbarHeight},
 	}
 	tb.scrolling = false
 }
@@ -89,11 +91,12 @@ func (tb *Toolbar) loadTools(textures map[string]*ebiten.Image) {
 		var tool attributes.Tool = attributes.Tool{}
 		tool.Construct(
 			attributes.Rect{
-				Position: attributes.Spatial{X: float64(col*3)*22 + 10 + float64(col*2)*20, Y: float64(row)*66 + 10 + float64(row)*20},
-				Size:     attributes.Spatial{X: 60, Y: 60},
+				Position: attributes.Vector{X: float64(col*3)*22 + 10 + tb.position.X + float64(col*2)*20, Y: float64(row)*66 + 10 + tb.position.Y + float64(row)*20},
+				Size:     attributes.Vector{X: 60, Y: 60},
 			},
 			textures[imgName],
 			imgName,
+			tb.position,
 		)
 		tb.tools[row][col] = tool
 	}
@@ -139,11 +142,11 @@ func (tb *Toolbar) updateTools() {
 func (tb *Toolbar) updateScrollBar() {
 	var x, y int = ebiten.CursorPosition()
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
-		if tb.scrollbar.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+		if tb.scrollbar.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 			tb.scrolling = true
 		}
 	}
-	if tb.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if tb.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		_, yScroll := ebiten.Wheel()
 		yScroll *= 11
 		if !(tb.scrollbar.Top()-float64(yScroll) > 0) {
@@ -156,7 +159,7 @@ func (tb *Toolbar) updateScrollBar() {
 			}
 		}
 	}
-	if tb.scrollbarBackground.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if tb.scrollbarBackground.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			tb.scrollbar.Position.Y = float64(y) - tb.scrollbar.Size.Y/2
 			if tb.scrollbar.Top() < 0 {
@@ -181,7 +184,7 @@ func (tb *Toolbar) updateScrollBar() {
 }
 
 func (tb *Toolbar) Draw(surface *ebiten.Image) {
-	tb.rect.Draw(tb.field, color.RGBA{20, 20, 23, 255}, attributes.Spatial{X: 0, Y: 0})
+	tb.rect.Draw(tb.field, color.RGBA{20, 20, 23, 255}, attributes.Vector{X: 0, Y: 0})
 	for _, row := range tb.tools {
 		for _, tool := range row {
 			img, _ := tool.GetCurrentImage()
@@ -192,10 +195,10 @@ func (tb *Toolbar) Draw(surface *ebiten.Image) {
 			}
 		}
 	}
-	tb.scrollbarBackground.Draw(tb.field, color.RGBA{58, 55, 94, 255}, attributes.Spatial{X: 0, Y: 0})
-	tb.scrollbar.Draw(tb.field, tb.scrollbarColor, attributes.Spatial{X: 0, Y: 0})
+	tb.scrollbarBackground.Draw(tb.field, color.RGBA{58, 55, 94, 255}, attributes.Vector{X: 0, Y: 0})
+	tb.scrollbar.Draw(tb.field, tb.scrollbarColor, attributes.Vector{X: 0, Y: 0})
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Scale(1, 1)
-	options.GeoM.Translate(10, 10)
+	options.GeoM.Translate(tb.position.X, tb.position.Y)
 	surface.DrawImage(tb.field, options)
 }

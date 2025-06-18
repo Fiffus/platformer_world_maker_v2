@@ -11,7 +11,7 @@ import (
 
 type Canvas struct {
 	canvas       *ebiten.Image
-	position     attributes.Spatial
+	position     attributes.Vector
 	camera       Camera
 	Layers       []attributes.Layer
 	activeLayer  int
@@ -23,9 +23,9 @@ func (c *Canvas) Contruct(images map[string]*ebiten.Image) {
 	var width float64 = float64(screenWidth) * 0.75
 
 	c.canvas = ebiten.NewImage(int(width), screenHeight)
-	c.position = attributes.Spatial{X: float64(screenWidth) - width, Y: 0}
+	c.position = attributes.Vector{X: float64(screenWidth) - width, Y: 0}
 	c.camera = Camera{}
-	c.camera.Construct(attributes.Spatial{X: width, Y: float64(screenHeight)})
+	c.camera.Construct(attributes.Vector{X: width, Y: float64(screenHeight)})
 	c.baseTileSize = loader.CalcBaseSize(images)
 
 	c.Layers = []attributes.Layer{}
@@ -48,7 +48,7 @@ func (c *Canvas) ChangeDimensions(dimensions [2]int) {
 				// add new tiles when enlarging canvas
 				temp[row][col] = attributes.Tile{}
 				temp[row][col].Construct(
-					attributes.Spatial{X: float64(col) * c.baseTileSize, Y: float64(row) * c.baseTileSize},
+					attributes.Vector{X: float64(col) * c.baseTileSize, Y: float64(row) * c.baseTileSize},
 					c.baseTileSize,
 					"air",
 					nil,
@@ -68,7 +68,7 @@ func (c *Canvas) ChangeDimensions(dimensions [2]int) {
 
 func (c *Canvas) CheckBoundsAfterDimensionChange() {
 	c.camera.CheckBoundsAfterDimensionChange(
-		attributes.Spatial{
+		attributes.Vector{
 			X: float64(len(c.Layers[0][0])) * c.baseTileSize * attributes.SCALE,
 			Y: float64(len(c.Layers[0])) * c.baseTileSize * attributes.SCALE,
 		},
@@ -84,7 +84,7 @@ func (c *Canvas) ActiveLayer() int {
 }
 
 func (c *Canvas) Update(currentImageName string, currentImage *ebiten.Image, cursor attributes.Rect) {
-	c.camera.Move(attributes.Spatial{X: float64(len(c.Layers[0][0])) * c.baseTileSize * attributes.SCALE, Y: float64(len(c.Layers[0])) * c.baseTileSize * attributes.SCALE})
+	c.camera.Move(attributes.Vector{X: float64(len(c.Layers[0][0])) * c.baseTileSize * attributes.SCALE, Y: float64(len(c.Layers[0])) * c.baseTileSize * attributes.SCALE})
 	var screenWidth, screenHeight int = ebiten.Monitor().Size()
 
 	cursor.Position.X += c.camera.Offset().X - float64(screenWidth)*0.25

@@ -17,9 +17,9 @@ type DimensionChanger struct {
 	changeableY bool
 }
 
-func (dc *DimensionChanger) Construct(position attributes.Spatial) {
+func (dc *DimensionChanger) Construct(position attributes.Vector) {
 	dc.entryX.Construct(position)
-	dc.entryY.Construct(attributes.Spatial{X: position.X, Y: position.Y + dc.entryX.rect.Size.Y})
+	dc.entryY.Construct(attributes.Vector{X: position.X, Y: position.Y + dc.entryX.rect.Size.Y})
 	dc.entryX.text = "230"
 	dc.entryY.text = "160"
 	dc.validX = true
@@ -78,7 +78,7 @@ func (dc *DimensionChanger) Update() {
 	dc.validateInputX()
 	dc.validateInputY()
 	if dc.entryX.entered {
-		if dc.validX && ((inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && !dc.entryX.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)})) || ebiten.IsKeyPressed(ebiten.KeyEnter)) {
+		if dc.validX && ((inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && !dc.entryX.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)})) || ebiten.IsKeyPressed(ebiten.KeyEnter)) {
 			dc.changeableX = true
 		}
 	}
@@ -86,7 +86,7 @@ func (dc *DimensionChanger) Update() {
 	dc.entryX.editText()
 
 	if dc.entryY.entered {
-		if dc.validY && ((inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && !dc.entryY.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)})) || ebiten.IsKeyPressed(ebiten.KeyEnter)) {
+		if dc.validY && ((inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && !dc.entryY.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)})) || ebiten.IsKeyPressed(ebiten.KeyEnter)) {
 			dc.changeableY = true
 		}
 	}

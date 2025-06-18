@@ -13,14 +13,16 @@ type Tool struct {
 	image            *ebiten.Image
 	imageName        string
 	rect             Rect
-	originalPosition Spatial
+	originalPosition Vector
+	toolbarOffset    Vector
 }
 
-func (t *Tool) Construct(rect Rect, texture *ebiten.Image, imageName string) {
+func (t *Tool) Construct(rect Rect, texture *ebiten.Image, imageName string, toolbarOffset Vector) {
 	t.image = texture
 	t.imageName = imageName
 	t.rect = rect
 	t.originalPosition = t.rect.Position
+	t.toolbarOffset = toolbarOffset
 }
 
 func (t *Tool) calculateScale() float64 {
@@ -29,7 +31,7 @@ func (t *Tool) calculateScale() float64 {
 
 func (t *Tool) Pressed() bool {
 	var x, y int = ebiten.CursorPosition()
-	if t.rect.CollidePoint(Spatial{X: float64(x), Y: float64(y)}) {
+	if t.rect.CollidePoint(Vector{X: float64(x), Y: float64(y)}) {
 		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 			return true
 		}
@@ -50,9 +52,9 @@ func (t *Tool) GetCurrentImage() (*ebiten.Image, string) {
 }
 
 func (t *Tool) Draw(surface *ebiten.Image) {
-	t.rect.Draw(surface, color.RGBA{58, 55, 94, 100}, Spatial{X: 0, Y: 0})
+	t.rect.Draw(surface, color.RGBA{58, 55, 94, 100}, t.toolbarOffset)
 	options := &ebiten.DrawImageOptions{}
 	options.GeoM.Scale(t.calculateScale(), t.calculateScale())
-	options.GeoM.Translate(t.rect.Left(), t.rect.Top())
+	options.GeoM.Translate(t.rect.Left()-t.toolbarOffset.X, t.rect.Top()-t.toolbarOffset.Y)
 	surface.DrawImage(t.image, options)
 }

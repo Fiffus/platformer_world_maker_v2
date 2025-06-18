@@ -2,7 +2,7 @@ package attributes
 
 import "image/color"
 
-type Spatial struct {
+type Vector struct {
 	X float64
 	Y float64
 }

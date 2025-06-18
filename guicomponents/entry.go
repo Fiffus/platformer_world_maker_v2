@@ -22,10 +22,10 @@ type Entry struct {
 	entered  bool
 }
 
-func (e *Entry) Construct(position attributes.Spatial) {
+func (e *Entry) Construct(position attributes.Vector) {
 	e.rect = attributes.Rect{
 		Position: position,
-		Size: attributes.Spatial{
+		Size: attributes.Vector{
 			X: 200,
 			Y: 60,
 		},
@@ -59,13 +59,13 @@ func (e *Entry) IsActive() bool {
 func (e *Entry) enter() {
 	var x, y int = ebiten.CursorPosition()
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && !e.entered {
-		if e.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+		if e.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 			e.entered = true
 			e.clr.Current = e.clr.Highlight
 			return
 		}
 	}
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && e.entered && !e.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && e.entered && !e.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		e.entered = false
 		e.clr.Current = e.clr.Normal
 	}
@@ -96,7 +96,7 @@ func (e *Entry) Update() {
 }
 
 func (e *Entry) Draw(surface *ebiten.Image) {
-	e.rect.Draw(surface, e.clr.Current, attributes.Spatial{X: 0, Y: 0})
+	e.rect.Draw(surface, e.clr.Current, attributes.Vector{X: 0, Y: 0})
 
 	var textWidth, textHeight = text.Measure(e.text, e.fontFace, e.fontFace.Size+10)
 

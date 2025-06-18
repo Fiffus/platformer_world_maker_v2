@@ -8,7 +8,7 @@ func (l *Layer) Construct(rows, cols int, baseTileSize float64) {
 		(*l)[row] = make([]Tile, cols)
 		for col := range (*l)[row] {
 			(*l)[row][col].Construct(
-				Spatial{X: float64(col) * baseTileSize, Y: float64(row) * baseTileSize},
+				Vector{X: float64(col) * baseTileSize, Y: float64(row) * baseTileSize},
 				baseTileSize,
 				"air",
 				nil,

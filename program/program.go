@@ -33,30 +33,30 @@ func (p *Program) Init() {
 	p.images = loader.LoadImages()
 
 	p.canv.Contruct(p.images)
-	p.dimensionChanger.Construct(attributes.Spatial{X: 30, Y: 600})
+	p.dimensionChanger.Construct(attributes.Vector{X: 30, Y: 600})
 	p.toolbar.Construct(p.images)
 
 	p.buttons = make(map[string]*guicomponents.Button)
 	p.buttons["exit"] = &guicomponents.Button{}
-	p.buttons["exit"].Construct(attributes.Spatial{X: 30, Y: 990}, "Exit")
+	p.buttons["exit"].Construct(attributes.Vector{X: 30, Y: 990}, "Exit")
 	p.buttons["load"] = &guicomponents.Button{}
-	p.buttons["load"].Construct(attributes.Spatial{X: 30, Y: 900}, "Load")
+	p.buttons["load"].Construct(attributes.Vector{X: 30, Y: 900}, "Load")
 	p.buttons["save"] = &guicomponents.Button{}
-	p.buttons["save"].Construct(attributes.Spatial{X: 260, Y: 900}, "Save")
+	p.buttons["save"].Construct(attributes.Vector{X: 260, Y: 900}, "Save")
 	p.buttons["polish"] = &guicomponents.Button{}
-	p.buttons["polish"].Construct(attributes.Spatial{X: 30, Y: 810}, "Polish")
+	p.buttons["polish"].Construct(attributes.Vector{X: 30, Y: 810}, "Polish")
 	p.buttons["fill"] = &guicomponents.Button{}
-	p.buttons["fill"].Construct(attributes.Spatial{X: 260, Y: 810}, "Fill")
+	p.buttons["fill"].Construct(attributes.Vector{X: 260, Y: 810}, "Fill")
 
 	p.dropDown = guicomponents.DropDown{}
-	p.dropDown.Construct(attributes.Spatial{X: 260, Y: 600})
+	p.dropDown.Construct(attributes.Vector{X: 260, Y: 600})
 
 	p.puwLoad = guicomponents.PopUpWindow{}
 	p.puwLoad.Construct("Enter project name:", "./worlds/")
 	p.puwSave = guicomponents.PopUpWindow{}
 	p.puwSave.Construct("Save project as:", "")
 
-	p.cursor.Construct(attributes.Spatial{X: 70, Y: 70})
+	p.cursor.Construct(attributes.Vector{X: 70, Y: 70})
 
 	p.tickDelay = 0
 }

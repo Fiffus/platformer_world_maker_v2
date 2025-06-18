@@ -13,10 +13,10 @@ import (
 type Label struct {
 	text     string
 	fontFace *text.GoTextFace
-	position attributes.Spatial
+	position attributes.Vector
 }
 
-func (l *Label) Construct(position attributes.Spatial, labelText string) {
+func (l *Label) Construct(position attributes.Vector, labelText string) {
 	l.text = labelText
 	var err error
 	fontFace, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.Inter))

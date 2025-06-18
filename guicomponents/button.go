@@ -24,10 +24,10 @@ type Button struct {
 	fontFace *text.GoTextFace
 }
 
-func (b *Button) Construct(position attributes.Spatial, buttonText string) {
+func (b *Button) Construct(position attributes.Vector, buttonText string) {
 	b.rect = attributes.Rect{
 		Position: position,
-		Size: attributes.Spatial{
+		Size: attributes.Vector{
 			X: 200,
 			Y: 60,
 		},
@@ -51,7 +51,7 @@ func (b *Button) Construct(position attributes.Spatial, buttonText string) {
 
 func (b *Button) HighLight() {
 	x, y := ebiten.CursorPosition()
-	if b.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if b.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		b.clr.Current = b.clr.Highlight
 		return
 	}
@@ -64,7 +64,7 @@ func (b *Button) Rect() attributes.Rect {
 
 func (b *Button) Pressed() bool {
 	var x, y int = ebiten.CursorPosition()
-	if b.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if b.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 			return true
 		}
@@ -73,7 +73,7 @@ func (b *Button) Pressed() bool {
 }
 
 func (b *Button) Draw(surface *ebiten.Image) {
-	b.rect.Draw(surface, b.clr.Current, attributes.Spatial{X: 0, Y: 0})
+	b.rect.Draw(surface, b.clr.Current, attributes.Vector{X: 0, Y: 0})
 
 	var textWidth, textHeight = text.Measure(b.text, b.fontFace, b.fontFace.Size+10)
 

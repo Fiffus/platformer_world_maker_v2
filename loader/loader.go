@@ -36,7 +36,7 @@ func transformData(data []string, dimensions [2]int) [][]string {
 }
 
 func getImageNames() []string {
-	dir, err := os.ReadDir("images")
+	dir, err := os.ReadDir("example_images")
 	var imageNames []string
 	if err != nil {
 		log.Fatal(err)
@@ -50,7 +50,7 @@ func getImageNames() []string {
 func LoadImages() map[string]*ebiten.Image {
 	var tileImages map[string]*ebiten.Image = make(map[string]*ebiten.Image)
 	for _, imageName := range getImageNames() {
-		image, _, err := ebitenutil.NewImageFromFile("images/" + imageName)
+		image, _, err := ebitenutil.NewImageFromFile("example_images/" + imageName)
 		tileImages[strings.Split(imageName, ".")[0]] = image
 		if err != nil {
 			log.Fatal(err)
@@ -94,7 +94,7 @@ func GenerateLevelTiles(loadedImages map[string]*ebiten.Image, projectLayerName 
 			if imageNames[row][col] != "air" {
 				layer[row][col] = attributes.Tile{}
 				layer[row][col].Construct(
-					attributes.Spatial{X: float64(col) * baseSize, Y: float64(row) * baseSize},
+					attributes.Vector{X: float64(col) * baseSize, Y: float64(row) * baseSize},
 					baseSize,
 					imageNames[row][col],
 					loadedImages[imageNames[row][col]],
@@ -103,7 +103,7 @@ func GenerateLevelTiles(loadedImages map[string]*ebiten.Image, projectLayerName 
 			}
 			layer[row][col] = attributes.Tile{}
 			layer[row][col].Construct(
-				attributes.Spatial{X: float64(col) * baseSize, Y: float64(row) * baseSize},
+				attributes.Vector{X: float64(col) * baseSize, Y: float64(row) * baseSize},
 				baseSize,
 				"air",
 				nil,

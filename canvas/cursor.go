@@ -12,9 +12,9 @@ type Cursor struct {
 	color color.RGBA
 }
 
-func (c *Cursor) Construct(size attributes.Spatial) {
+func (c *Cursor) Construct(size attributes.Vector) {
 	c.rect = attributes.Rect{
-		Position: attributes.Spatial{X: 0, Y: 0},
+		Position: attributes.Vector{X: 0, Y: 0},
 		Size:     size,
 	}
 	c.color = color.RGBA{58, 55, 94, 80}
@@ -22,7 +22,7 @@ func (c *Cursor) Construct(size attributes.Spatial) {
 
 func (c *Cursor) move() {
 	var x, y int = ebiten.CursorPosition()
-	c.rect.Position = attributes.Spatial{X: float64(x) - c.rect.Size.X/2, Y: float64(y) - c.rect.Size.Y/2}
+	c.rect.Position = attributes.Vector{X: float64(x) - c.rect.Size.X/2, Y: float64(y) - c.rect.Size.Y/2}
 }
 
 func (c *Cursor) changeSize() {
@@ -45,5 +45,5 @@ func (c *Cursor) Update() {
 }
 
 func (c *Cursor) Draw(surface *ebiten.Image) {
-	c.rect.Draw(surface, c.color, attributes.Spatial{X: 0, Y: 0})
+	c.rect.Draw(surface, c.color, attributes.Vector{X: 0, Y: 0})
 }

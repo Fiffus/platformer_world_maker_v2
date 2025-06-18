@@ -7,21 +7,21 @@ import (
 )
 
 type Camera struct {
-	offset attributes.Spatial
+	offset attributes.Vector
 	rect   attributes.Rect
 	speed  float64
 }
 
-func (c *Camera) Construct(size attributes.Spatial) {
+func (c *Camera) Construct(size attributes.Vector) {
 	c.rect = attributes.Rect{
-		Position: attributes.Spatial{X: 0, Y: 0},
+		Position: attributes.Vector{X: 0, Y: 0},
 		Size:     size,
 	}
 	c.offset = c.rect.Position
 	c.speed = 30
 }
 
-func (c *Camera) Move(bounds attributes.Spatial) {
+func (c *Camera) Move(bounds attributes.Vector) {
 	if (ebiten.IsKeyPressed(ebiten.KeyArrowUp) || ebiten.IsKeyPressed(ebiten.KeyW)) && c.rect.Top()-c.speed >= 0 {
 		c.rect.Position.Y -= c.speed
 	}
@@ -38,7 +38,7 @@ func (c *Camera) Move(bounds attributes.Spatial) {
 	c.offset = c.rect.Position
 }
 
-func (c *Camera) scroll(bounds attributes.Spatial) {
+func (c *Camera) scroll(bounds attributes.Vector) {
 	_, scroll := ebiten.Wheel()
 	scroll *= 100
 
@@ -75,7 +75,7 @@ func (c *Camera) scroll(bounds attributes.Spatial) {
 	}
 }
 
-func (c *Camera) CheckBoundsAfterDimensionChange(bounds attributes.Spatial) {
+func (c *Camera) CheckBoundsAfterDimensionChange(bounds attributes.Vector) {
 	if c.rect.Bottom() >= bounds.Y {
 		c.rect.Position.Y -= c.rect.Bottom() - bounds.Y
 	}
@@ -88,6 +88,6 @@ func (c *Camera) Rect() attributes.Rect {
 	return c.rect
 }
 
-func (c *Camera) Offset() attributes.Spatial {
+func (c *Camera) Offset() attributes.Vector {
 	return c.offset
 }

@@ -19,10 +19,10 @@ type DropDownRow struct {
 	active   bool
 }
 
-func (ddr *DropDownRow) Construct(position attributes.Spatial, rowText string) {
+func (ddr *DropDownRow) Construct(position attributes.Vector, rowText string) {
 	ddr.rect = attributes.Rect{
 		Position: position,
-		Size: attributes.Spatial{
+		Size: attributes.Vector{
 			X: 140,
 			Y: 60,
 		},
@@ -48,7 +48,7 @@ func (ddr *DropDownRow) Construct(position attributes.Spatial, rowText string) {
 func (ddr *DropDownRow) PressedLeft() bool {
 	var x, y int = ebiten.CursorPosition()
 
-	if ddr.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if ddr.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 			return true
 		}
@@ -59,7 +59,7 @@ func (ddr *DropDownRow) PressedLeft() bool {
 func (ddr *DropDownRow) PressedRight() bool {
 	var x, y int = ebiten.CursorPosition()
 
-	if ddr.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if ddr.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonRight) {
 			return true
 		}
@@ -70,7 +70,7 @@ func (ddr *DropDownRow) PressedRight() bool {
 func (ddr *DropDownRow) highlight() {
 	var x, y int = ebiten.CursorPosition()
 
-	if ddr.rect.CollidePoint(attributes.Spatial{X: float64(x), Y: float64(y)}) {
+	if ddr.rect.CollidePoint(attributes.Vector{X: float64(x), Y: float64(y)}) {
 		ddr.clr.Current = ddr.clr.Highlight
 	}
 
@@ -92,7 +92,7 @@ func (ddr *DropDownRow) Update() {
 }
 
 func (ddr *DropDownRow) Draw(surface *ebiten.Image) {
-	ddr.rect.Draw(surface, ddr.clr.Current, attributes.Spatial{X: 0, Y: 0})
+	ddr.rect.Draw(surface, ddr.clr.Current, attributes.Vector{X: 0, Y: 0})
 
 	var textWidth, textHeight = text.Measure(ddr.text, ddr.fontFace, ddr.fontFace.Size+10)
 
