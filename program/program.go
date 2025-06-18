@@ -1,7 +1,6 @@
 package program
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"platformer_world_maker_v2/attributes"
@@ -63,7 +62,7 @@ func (p *Program) Init() {
 }
 
 func (p *Program) setDelayDefault() {
-	p.tickDelay = 5
+	p.tickDelay = 8
 }
 
 func (p *Program) delayUpdate() bool {
@@ -78,8 +77,6 @@ func (p *Program) Update() error {
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) {
 		os.Exit(0)
 	}
-
-	fmt.Println(p.tickDelay)
 
 	if p.delayUpdate() {
 		return nil
