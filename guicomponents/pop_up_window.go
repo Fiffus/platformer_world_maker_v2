@@ -31,6 +31,8 @@ func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 		},
 		"Confirm",
 	)
+	puw.confirm.rect.Position.X -= puw.confirm.rect.Size.X + 10
+	puw.confirm.rect.Position.Y -= puw.confirm.rect.Size.Y + 10
 	puw.cancel.Construct(
 		attributes.Spatial{
 			X: puw.rect.Left(),
@@ -38,16 +40,20 @@ func (puw *PopUpWindow) Construct(title, initialEntryValue string) {
 		},
 		"Cancel",
 	)
+	puw.cancel.rect.Position.X += 10
+	puw.cancel.rect.Position.Y -= puw.cancel.rect.Size.Y + 10
 	puw.entry.Construct(
 		attributes.Spatial{
 			X: puw.rect.Left(),
 			Y: puw.rect.MidLeft().Y,
 		},
 	)
+	puw.entry.rect.Position.X = puw.rect.Center().X - puw.entry.rect.Size.X/2
+	puw.entry.rect.Position.Y = puw.rect.Center().Y - puw.entry.rect.Size.Y/2
 	puw.title.Construct(
 		attributes.Spatial{
-			X: puw.rect.Left(),
-			Y: puw.rect.Top(),
+			X: puw.rect.Left() + 10,
+			Y: puw.rect.Top() + 10,
 		},
 		title,
 	)
