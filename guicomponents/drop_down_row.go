@@ -94,8 +94,10 @@ func (ddr *DropDownRow) Update() {
 func (ddr *DropDownRow) Draw(surface *ebiten.Image) {
 	ddr.rect.Draw(surface, ddr.clr.Current, attributes.Spatial{X: 0, Y: 0})
 
+	var textWidth, textHeight = text.Measure(ddr.text, ddr.fontFace, ddr.fontFace.Size+10)
+
 	options := &text.DrawOptions{}
-	options.GeoM.Translate(ddr.rect.Left()+ddr.rect.Size.X/2-float64(len(ddr.text))/2*20, ddr.rect.Top()+ddr.rect.Size.Y/2-25)
+	options.GeoM.Translate(ddr.rect.Left()+ddr.rect.Size.X/2-float64(len(ddr.text))/2-textWidth/2, ddr.rect.Top()+ddr.rect.Size.Y/2-textHeight/2)
 	options.ColorScale.Scale(1, 1, 1, 1)
 	text.Draw(surface, ddr.text, ddr.fontFace, options)
 }

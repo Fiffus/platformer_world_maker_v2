@@ -75,8 +75,10 @@ func (b *Button) Pressed() bool {
 func (b *Button) Draw(surface *ebiten.Image) {
 	b.rect.Draw(surface, b.clr.Current, attributes.Spatial{X: 0, Y: 0})
 
+	var textWidth, textHeight = text.Measure(b.text, b.fontFace, b.fontFace.Size+10)
+
 	options := &text.DrawOptions{}
-	options.GeoM.Translate(b.rect.Left()+b.rect.Size.X/2-float64(len(b.text))/2*20, b.rect.Top()+b.rect.Size.Y/2-25)
+	options.GeoM.Translate(b.rect.Left()+b.rect.Size.X/2-float64(len(b.text))/2-textWidth/2, b.rect.Top()+b.rect.Size.Y/2-textHeight/2)
 	options.ColorScale.Scale(1, 1, 1, 1)
 	text.Draw(surface, b.text, b.fontFace, options)
 }

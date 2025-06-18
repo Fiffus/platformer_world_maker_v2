@@ -172,13 +172,17 @@ func (dd *DropDown) Draw(surface *ebiten.Image) {
 	dd.rect.Draw(surface, dd.clr.Current, attributes.Spatial{X: 0, Y: 0})
 	dd.addRect.Draw(surface, dd.addClr.Current, attributes.Spatial{X: 0, Y: 0})
 
+	var textWidth, textHeight = text.Measure(dd.text, dd.fontFace, dd.fontFace.Size+10)
+
 	options := text.DrawOptions{}
-	options.GeoM.Translate(dd.rect.Left()+dd.rect.Size.X/2-float64(len(dd.text))/2*20, dd.rect.Top()+dd.rect.Size.Y/2-25)
+	options.GeoM.Translate(dd.rect.Left()+dd.rect.Size.X/2-float64(len(dd.text))/2-textWidth/2, dd.rect.Top()+dd.rect.Size.Y/2-textHeight/2)
 	options.ColorScale.Scale(1, 1, 1, 1)
 	text.Draw(surface, dd.text, dd.fontFace, &options)
 
+	var addWidth, addHeight = text.Measure("+", dd.fontFace, dd.fontFace.Size+10)
+
 	addOptions := text.DrawOptions{}
-	addOptions.GeoM.Translate(dd.addRect.Left()+dd.addRect.Size.X/2-1.0/2*20, dd.addRect.Top()+dd.addRect.Size.Y/2-25)
+	addOptions.GeoM.Translate(dd.addRect.Left()+dd.addRect.Size.X/2-1.0/2.0-addWidth/2, dd.addRect.Top()+dd.addRect.Size.Y/2-addHeight/2)
 	text.Draw(surface, "+", dd.fontFace, &addOptions)
 
 	if !dd.opened {
